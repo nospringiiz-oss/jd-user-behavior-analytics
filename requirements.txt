@@ -1,0 +1,13 @@
+# Core data processing
+pandas>=2.2,<3.0
+numpy>=1.26,<3.0
+
+# Database connection
+SQLAlchemy>=2.0,<3.0
+mysql-connector-python>=8.4
+
+# Environment configuration
+python-dotenv>=1.0,<2.0
+
+# Excel file support
+openpyxl>=3.1,<4.0
