@@ -1,23 +1,11 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- 10 Create Category Performance Mart
---
--- Grain:
--- One row per active product category.
---
--- Cart conversion definition:
--- A converted cart user added and purchased at least one
--- identical product within the category.
---
--- A cart-abandon user added products in the category
--- but did not complete any same-product cart conversion.
--- =========================================================
 
 
--- =========================================================
+
 -- 1. Create category performance table
--- =========================================================
+
 
 DROP TABLE IF EXISTS mart_category_performance;
 
@@ -68,9 +56,8 @@ CREATE TABLE mart_category_performance (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
+
 -- 2. Insert category-level performance
--- =========================================================
 
 INSERT INTO mart_category_performance (
     category_id,
@@ -164,10 +151,6 @@ SELECT
     action_metrics.last_action_time
 
 FROM (
-    -- -----------------------------------------------------
-    -- Category action totals
-    -- -----------------------------------------------------
-
     SELECT
         category_id,
 
@@ -209,10 +192,6 @@ FROM (
 ) AS action_metrics
 
 INNER JOIN (
-    -- -----------------------------------------------------
-    -- Category-level distinct user metrics
-    -- -----------------------------------------------------
-
     SELECT
         user_category.category_id,
 
@@ -284,10 +263,6 @@ INNER JOIN (
        user_metrics.category_id
 
 LEFT JOIN (
-    -- -----------------------------------------------------
-    -- Latest product-comment metrics by category
-    -- -----------------------------------------------------
-
     SELECT
         category_id,
 
@@ -310,12 +285,7 @@ LEFT JOIN (
        comment_metrics.category_id;
 
 
--- =========================================================
 -- 3. Validation: reconstruct all actions
---
--- Expected reconstructed_actions:
--- 50,601,736
--- =========================================================
 
 SELECT
     COUNT(*) AS active_categories,
@@ -344,12 +314,8 @@ SELECT
 FROM mart_category_performance;
 
 
--- =========================================================
+
 -- 4. Validation: cart-user consistency
---
--- Expected inconsistent_categories:
--- 0
--- =========================================================
 
 SELECT
     COUNT(*) AS inconsistent_categories
@@ -360,9 +326,7 @@ WHERE cart_users <>
       cart_converted_users + cart_abandon_users;
 
 
--- =========================================================
 -- 5. Category performance report
--- =========================================================
 
 SELECT
     category_id,
@@ -392,9 +356,8 @@ ORDER BY
     cart_to_purchase_rate DESC;
 
 
--- =========================================================
+
 -- 6. Categories with strongest cart conversion
--- =========================================================
 
 SELECT
     category_id,
@@ -416,9 +379,7 @@ ORDER BY
     cart_users DESC;
 
 
--- =========================================================
 -- 7. Categories with severe cart abandonment
--- =========================================================
 
 SELECT
     category_id,
