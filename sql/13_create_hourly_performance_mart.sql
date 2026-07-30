@@ -1,24 +1,8 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- 13 Create Hourly Performance Mart
---
--- Main outputs:
--- 1. mart_date_hour_performance
---    One row per date and hour.
---
--- 2. mart_hourly_performance
---    One row per hour of day.
---
--- Strict cart conversion:
--- A user added and purchased the same product
--- during the same date and hour.
--- =========================================================
 
-
--- =========================================================
 -- 1. Remove previous working and output tables
--- =========================================================
 
 DROP TABLE IF EXISTS mart_hourly_performance;
 DROP TABLE IF EXISTS mart_date_hour_performance;
@@ -26,15 +10,8 @@ DROP TABLE IF EXISTS work_user_hourly;
 DROP TABLE IF EXISTS work_user_product_hourly;
 
 
--- =========================================================
+
 -- 2. Create hourly user-product working table
---
--- Grain:
--- Date + hour + user + product
---
--- This table is temporary project processing data.
--- It will be deleted at the end of the script.
--- =========================================================
 
 CREATE TABLE work_user_product_hourly (
     action_date          DATE NOT NULL,
@@ -52,12 +29,7 @@ CREATE TABLE work_user_product_hourly (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- 3. Aggregate raw actions to date-hour-user-product level
---
--- This is the most time-consuming step because it scans
--- all 50,601,736 action records.
--- =========================================================
 
 INSERT INTO work_user_product_hourly (
     action_date,
@@ -98,12 +70,7 @@ GROUP BY
     sku_id;
 
 
--- =========================================================
 -- 4. Create date-hour-user working table
---
--- Grain:
--- Date + hour + user
--- =========================================================
 
 CREATE TABLE work_user_hourly (
     action_date                       DATE NOT NULL,
@@ -190,12 +157,7 @@ GROUP BY
     user_id;
 
 
--- =========================================================
 -- 5. Create date-hour performance table
---
--- Grain:
--- One row per date and hour.
--- =========================================================
 
 CREATE TABLE mart_date_hour_performance (
     action_date                       DATE NOT NULL,
@@ -235,9 +197,7 @@ CREATE TABLE mart_date_hour_performance (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- 6. Insert date-hour performance
--- =========================================================
 
 INSERT INTO mart_date_hour_performance (
     action_date,
@@ -399,12 +359,9 @@ INNER JOIN (
        user_metrics.hour_of_day;
 
 
--- =========================================================
+
 -- 7. Create final hourly performance table
---
--- Grain:
--- One row per hour of day.
--- =========================================================
+
 
 CREATE TABLE mart_hourly_performance (
     hour_of_day                       TINYINT UNSIGNED NOT NULL,
@@ -441,9 +398,8 @@ CREATE TABLE mart_hourly_performance (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- 8. Insert hourly performance
--- =========================================================
+
 
 INSERT INTO mart_hourly_performance (
     hour_of_day,
@@ -615,15 +571,7 @@ CROSS JOIN (
 ) AS totals;
 
 
--- =========================================================
 -- 9. Validate date-hour action totals
---
--- Expected reconstructed_actions:
--- 50,601,736
---
--- Date-hour rows will normally be approximately 1,801.
--- The first date contains only the 23:00 hour.
--- =========================================================
 
 SELECT
     COUNT(*) AS date_hour_rows,
@@ -645,15 +593,7 @@ SELECT
 
 FROM mart_date_hour_performance;
 
-
--- =========================================================
 -- 10. Validate hourly table
---
--- Expected:
--- hourly_rows = 24
--- reconstructed_actions = 50,601,736
--- reconstructed_purchases = 48,252
--- =========================================================
 
 SELECT
     COUNT(*) AS hourly_rows,
@@ -677,9 +617,7 @@ SELECT
 FROM mart_hourly_performance;
 
 
--- =========================================================
 -- 11. Hourly performance report
--- =========================================================
 
 SELECT
     hour_of_day,
@@ -703,9 +641,7 @@ FROM mart_hourly_performance
 ORDER BY hour_of_day;
 
 
--- =========================================================
 -- 12. Peak purchase hours
--- =========================================================
 
 SELECT
     hour_of_day,
@@ -729,10 +665,7 @@ ORDER BY
 
 LIMIT 10;
 
-
--- =========================================================
 -- 13. Remove processing tables
--- =========================================================
 
 DROP TABLE IF EXISTS work_user_hourly;
 DROP TABLE IF EXISTS work_user_product_hourly;
