@@ -1,17 +1,9 @@
 USE jd_user_behavior;
 
--- =========================================================
+
 -- 15 Data Quality Audit
---
--- Purpose:
--- Validate completeness, validity, uniqueness,
--- referential integrity, and analytical consistency.
--- =========================================================
 
-
--- =========================================================
 -- 1. Source and staging row counts
--- =========================================================
 
 SELECT
     'stg_users' AS table_name,
@@ -40,12 +32,8 @@ SELECT
 FROM stg_actions;
 
 
--- =========================================================
+
 -- 2. Action-field completeness and validity
---
--- This query scans the full action table.
--- It may take several minutes.
--- =========================================================
 
 SELECT
     COUNT(*) AS total_action_rows,
@@ -93,10 +81,8 @@ SELECT
 FROM stg_actions;
 
 
--- =========================================================
 -- 3. Action-type distribution
--- Expected action types: 1 to 6 only
--- =========================================================
+
 
 SELECT
     action_type,
@@ -115,14 +101,7 @@ GROUP BY action_type
 ORDER BY action_type;
 
 
--- =========================================================
 -- 4. Duplicate primary identifiers
---
--- Expected:
--- duplicate_user_ids = 0
--- duplicate_product_ids = 0
--- duplicate_comment_snapshots = 0
--- =========================================================
 
 SELECT
     COUNT(*) AS duplicate_user_ids
@@ -164,9 +143,8 @@ FROM (
 ) AS duplicate_comments;
 
 
--- =========================================================
+
 -- 5. User-profile quality
--- =========================================================
 
 SELECT
     COUNT(*) AS total_users,
@@ -223,12 +201,7 @@ GROUP BY user_lv_cd
 ORDER BY user_lv_cd;
 
 
--- =========================================================
 -- 6. Product quality
---
--- -1 represents an unknown product attribute.
--- It has been converted to NULL in dim_products.
--- =========================================================
 
 SELECT
     COUNT(*) AS total_products,
@@ -266,10 +239,7 @@ SELECT
 FROM dim_products;
 
 
--- =========================================================
 -- 7. Comment quality
--- =========================================================
-
 SELECT
     COUNT(*) AS total_comment_rows,
 
@@ -302,13 +272,7 @@ SELECT
 FROM stg_comments;
 
 
--- =========================================================
 -- 8. Referential integrity: active users
---
--- These users have actions but no matching user profile.
--- They remain valid behavioural records and are assigned
--- an Unknown profile in the analytical layer.
--- =========================================================
 
 SELECT
     COUNT(*) AS active_users_without_profile
@@ -321,9 +285,7 @@ LEFT JOIN dim_users AS users
 WHERE users.user_id IS NULL;
 
 
--- =========================================================
 -- 9. Registered users without activity
--- =========================================================
 
 SELECT
     COUNT(*) AS registered_users_without_activity
@@ -336,9 +298,8 @@ LEFT JOIN mart_user_summary AS summary
 WHERE summary.user_id IS NULL;
 
 
--- =========================================================
 -- 10. Referential integrity: active products
--- =========================================================
+
 
 SELECT
     COUNT(*) AS active_products_without_product_profile
@@ -350,10 +311,8 @@ LEFT JOIN dim_products AS products
 
 WHERE products.sku_id IS NULL;
 
-
--- =========================================================
 -- 11. Comment records without product profile
--- =========================================================
+
 
 SELECT
     COUNT(DISTINCT comments.sku_id)
@@ -367,12 +326,8 @@ LEFT JOIN dim_products AS products
 WHERE products.sku_id IS NULL;
 
 
--- =========================================================
+
 -- 12. Category and brand consistency
---
--- Compare analytical action attributes with the
--- product dimension when a product profile exists.
--- =========================================================
 
 SELECT
     SUM(
@@ -391,11 +346,8 @@ LEFT JOIN dim_products AS products
     ON behavior.sku_id = products.sku_id;
 
 
--- =========================================================
+
 -- 13. Analytical action reconciliation
---
--- Every reconstructed total should equal 50,601,736.
--- =========================================================
 
 SELECT
     'stg_actions' AS data_layer,
@@ -459,17 +411,8 @@ SELECT
 FROM mart_hourly_performance;
 
 
--- =========================================================
+
 -- 14. Behaviour-total reconciliation
---
--- Expected:
--- browse_actions      = 18,981,373
--- cart_add_actions    =    575,418
--- cart_remove_actions =    256,053
--- purchase_actions    =     48,252
--- follow_actions      =    109,896
--- click_actions       = 30,630,744
--- =========================================================
 
 SELECT
     SUM(browse_count)
@@ -496,12 +439,7 @@ SELECT
 FROM mart_user_summary;
 
 
--- =========================================================
 -- 15. Customer-segment reconciliation
---
--- Expected:
--- user_difference = 0
--- =========================================================
 
 SELECT
     executive.active_users,
@@ -521,13 +459,7 @@ CROSS JOIN (
 ) AS segment;
 
 
--- =========================================================
 -- 16. Cart-pair consistency
---
--- Expected:
--- inconsistent_products = 0
--- cart_pair_difference = 0
--- =========================================================
 
 SELECT
     COUNT(*) AS inconsistent_products
