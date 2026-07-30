@@ -1,16 +1,10 @@
 USE jd_user_behavior;
 
--- =========================================================
+
 -- 11 Create Brand Performance Mart
---
--- Grain:
--- One row per active brand.
--- =========================================================
 
 
--- =========================================================
 -- 1. Create table
--- =========================================================
 
 DROP TABLE IF EXISTS mart_brand_performance;
 
@@ -61,9 +55,7 @@ CREATE TABLE mart_brand_performance (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- 2. Insert brand performance metrics
--- =========================================================
 
 INSERT INTO mart_brand_performance (
     brand_id,
@@ -290,12 +282,7 @@ LEFT JOIN (
        comment_metrics.brand_id;
 
 
--- =========================================================
 -- 3. Validate reconstructed actions
---
--- Expected:
--- reconstructed_actions = 50,601,736
--- =========================================================
 
 SELECT
     COUNT(*) AS active_brands,
@@ -324,13 +311,7 @@ SELECT
 FROM mart_brand_performance;
 
 
--- =========================================================
 -- 4. Validate cart-user consistency
---
--- Expected:
--- inconsistent_brands = 0
--- =========================================================
-
 SELECT
     COUNT(*) AS inconsistent_brands
 
@@ -340,9 +321,7 @@ WHERE cart_users <>
       cart_converted_users + cart_abandon_users;
 
 
--- =========================================================
 -- 5. Highest-sales brands
--- =========================================================
 
 SELECT
     brand_id,
@@ -367,12 +346,7 @@ ORDER BY
 LIMIT 20;
 
 
--- =========================================================
 -- 6. Brands with strongest cart conversion
---
--- Require at least 100 cart users to reduce
--- small-sample distortion.
--- =========================================================
 
 SELECT
     brand_id,
@@ -397,9 +371,7 @@ ORDER BY
 LIMIT 20;
 
 
--- =========================================================
 -- 7. Brands with severe cart abandonment
--- =========================================================
 
 SELECT
     brand_id,
