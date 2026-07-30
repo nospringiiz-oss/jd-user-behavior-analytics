@@ -1,9 +1,6 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- 1. Check action-table validity
--- This query scans the 50-million-row table once.
--- =========================================================
 
 SELECT
     COUNT(*) AS total_rows,
@@ -31,10 +28,8 @@ SELECT
 FROM stg_actions;
 
 
--- =========================================================
+
 -- 2. Check duplicate user IDs
--- Expected result: 0 duplicate_user_ids
--- =========================================================
 
 SELECT
     COUNT(*) AS duplicate_user_ids
@@ -46,10 +41,9 @@ FROM (
 ) AS duplicated_users;
 
 
--- =========================================================
+
 -- 3. Check duplicate product IDs
--- Expected result: 0 duplicate_product_ids
--- =========================================================
+
 
 SELECT
     COUNT(*) AS duplicate_product_ids
@@ -61,10 +55,9 @@ FROM (
 ) AS duplicated_products;
 
 
--- =========================================================
+
 -- 4. Check duplicate comment snapshots
--- One product should have one record per snapshot date.
--- =========================================================
+
 
 SELECT
     COUNT(*) AS duplicate_comment_snapshots
@@ -80,9 +73,7 @@ FROM (
 ) AS duplicated_comments;
 
 
--- =========================================================
 -- 5. Check user profile values
--- =========================================================
 
 SELECT
     age,
@@ -108,9 +99,7 @@ GROUP BY user_lv_cd
 ORDER BY user_lv_cd;
 
 
--- =========================================================
 -- 6. Check product category distribution
--- =========================================================
 
 SELECT
     cate,
@@ -120,9 +109,7 @@ GROUP BY cate
 ORDER BY product_count DESC;
 
 
--- =========================================================
 -- 7. Check comment values
--- =========================================================
 
 SELECT
     COUNT(*) AS total_comment_rows,
