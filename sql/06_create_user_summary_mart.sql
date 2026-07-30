@@ -1,9 +1,7 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- User-level analytical mart
--- Grain: one row per active user
--- =========================================================
+
 
 DROP TABLE IF EXISTS mart_user_summary;
 
@@ -54,9 +52,9 @@ CREATE TABLE mart_user_summary (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
+
 -- Insert user-level metrics
--- =========================================================
+
 
 INSERT INTO mart_user_summary (
     user_id,
@@ -353,9 +351,9 @@ SELECT
 FROM mart_user_summary;
 
 
--- =========================================================
+
 -- Verification 2: customer segment distribution
--- =========================================================
+
 
 SELECT
     customer_segment,
@@ -374,9 +372,8 @@ GROUP BY customer_segment
 ORDER BY user_count DESC;
 
 
--- =========================================================
+
 -- Verification 3: profile matching
--- =========================================================
 
 SELECT
     COUNT(*) AS active_users,
