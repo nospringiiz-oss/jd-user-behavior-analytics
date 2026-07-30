@@ -1,19 +1,9 @@
 USE jd_user_behavior;
 
--- =========================================================
+
 -- 14 Create Dashboard Summary Marts
---
--- Output tables:
--- 1. mart_dashboard_executive
--- 2. mart_funnel_summary
--- 3. mart_segment_performance
--- =========================================================
 
-
--- =========================================================
 -- PART 1: Executive KPI Summary
--- One row represents the complete observation period.
--- =========================================================
 
 DROP TABLE IF EXISTS mart_dashboard_executive;
 
@@ -296,15 +286,7 @@ CROSS JOIN (
 ) AS pair_metrics;
 
 
--- =========================================================
 -- PART 2: User Behaviour Funnel
---
--- This is a behavioural reach funnel.
--- Each stage shows users who performed that behaviour.
--- Users may skip stages, such as purchasing directly
--- without following or adding to cart.
--- =========================================================
-
 DROP TABLE IF EXISTS mart_funnel_summary;
 
 CREATE TABLE mart_funnel_summary (
@@ -409,10 +391,8 @@ SELECT
 FROM mart_user_summary;
 
 
--- =========================================================
+
 -- PART 3: Customer Segment Performance
--- One row per customer segment.
--- =========================================================
 
 DROP TABLE IF EXISTS mart_segment_performance;
 
@@ -521,38 +501,27 @@ FROM mart_user_summary
 GROUP BY customer_segment;
 
 
--- =========================================================
 -- VALIDATION 1: Executive KPI result
--- =========================================================
 
 SELECT *
 FROM mart_dashboard_executive;
 
 
--- =========================================================
 -- VALIDATION 2: Funnel result
--- =========================================================
 
 SELECT *
 FROM mart_funnel_summary
 ORDER BY stage_order;
 
 
--- =========================================================
 -- VALIDATION 3: Segment result
--- =========================================================
 
 SELECT *
 FROM mart_segment_performance
 ORDER BY user_count DESC;
 
 
--- =========================================================
 -- VALIDATION 4: User-level cart consistency
---
--- Expected:
--- cart_user_difference = 0
--- =========================================================
 
 SELECT
     cart_users,
@@ -567,12 +536,8 @@ SELECT
 FROM mart_dashboard_executive;
 
 
--- =========================================================
+
 -- VALIDATION 5: User-product pair consistency
---
--- Expected:
--- cart_pair_difference = 0
--- =========================================================
 
 SELECT
     cart_user_product_pairs,
@@ -587,12 +552,7 @@ SELECT
 FROM mart_dashboard_executive;
 
 
--- =========================================================
 -- VALIDATION 6: Segment users equal active users
---
--- Expected:
--- user_difference = 0
--- =========================================================
 
 SELECT
     executive.active_users,
