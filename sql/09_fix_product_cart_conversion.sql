@@ -1,30 +1,11 @@
 USE jd_user_behavior;
 
--- =========================================================
+
 -- 09 Fix Product Cart Conversion Metrics
---
--- Purpose:
--- 1. Add cart_converted_users if the column does not exist.
--- 2. Calculate strict cart-to-purchase conversion.
--- 3. Recalculate cart abandonment metrics.
---
--- Definitions:
--- cart_users:
---   Users who added the product to cart.
---
--- cart_converted_users:
---   Users who both added the product to cart
---   and purchased the same product.
---
--- cart_abandon_users:
---   Users who added the product to cart
---   but did not purchase the same product.
--- =========================================================
 
 
--- =========================================================
 -- 1. Add cart_converted_users only when it does not exist
--- =========================================================
+
 
 SET @column_exists = (
     SELECT COUNT(*)
@@ -55,18 +36,14 @@ EXECUTE add_column_statement;
 DEALLOCATE PREPARE add_column_statement;
 
 
--- =========================================================
 -- 2. Temporarily disable safe update mode
--- =========================================================
 
 SET @previous_safe_updates = @@SQL_SAFE_UPDATES;
 
 SET SQL_SAFE_UPDATES = 0;
 
 
--- =========================================================
 -- 3. Recalculate strict cart conversion metrics
--- =========================================================
 
 UPDATE mart_product_performance AS product
 
@@ -122,19 +99,13 @@ SET
         );
 
 
--- =========================================================
 -- 4. Restore previous safe update setting
--- =========================================================
 
 SET SQL_SAFE_UPDATES = @previous_safe_updates;
 
 
--- =========================================================
+
 -- 5. Validation: product-level consistency
---
--- Expected:
--- inconsistent_products = 0
--- =========================================================
 
 SELECT
     COUNT(*) AS inconsistent_products
@@ -145,13 +116,8 @@ WHERE cart_users <>
       cart_converted_users + cart_abandon_users;
 
 
--- =========================================================
 -- 6. Validation: overall cart-user totals
---
--- Expected:
--- total_cart_users =
--- total_converted_cart_users + total_abandoned_cart_users
--- =========================================================
+
 
 SELECT
     SUM(cart_users)
@@ -170,9 +136,8 @@ SELECT
 FROM mart_product_performance;
 
 
--- =========================================================
 -- 7. Overall strict cart conversion rates
--- =========================================================
+
 
 SELECT
     SUM(cart_users) AS total_cart_users,
@@ -200,12 +165,7 @@ SELECT
 FROM mart_product_performance;
 
 
--- =========================================================
 -- 8. Products with severe cart abandonment
---
--- At least 20 cart users are required to reduce
--- small-sample distortion.
--- =========================================================
 
 SELECT
     sku_id,
@@ -233,9 +193,7 @@ ORDER BY
 LIMIT 20;
 
 
--- =========================================================
 -- 9. Products with the strongest cart conversion
--- =========================================================
 
 SELECT
     sku_id,
