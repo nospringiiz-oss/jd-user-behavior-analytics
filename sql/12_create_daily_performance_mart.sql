@@ -1,24 +1,11 @@
 USE jd_user_behavior;
 
--- =========================================================
+
 -- 12 Create Daily Performance Mart
---
--- Grain:
--- One row per calendar date.
---
--- Same-day cart conversion:
--- A user adds and purchases the same product
--- on the same calendar date.
---
--- Same-day cart abandonment:
--- A user adds at least one product on the date,
--- but has no same-product cart conversion on that date.
--- =========================================================
 
 
--- =========================================================
 -- 1. Create daily performance table
--- =========================================================
+
 
 DROP TABLE IF EXISTS mart_daily_performance;
 
@@ -67,9 +54,7 @@ CREATE TABLE mart_daily_performance (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- 2. Insert daily metrics
--- =========================================================
 
 INSERT INTO mart_daily_performance (
     action_date,
@@ -215,9 +200,6 @@ FROM (
 ) AS action_metrics
 
 INNER JOIN (
-    -- -----------------------------------------------------
-    -- Daily distinct-user metrics
-    -- -----------------------------------------------------
 
     SELECT
         user_day.action_date,
@@ -308,13 +290,7 @@ INNER JOIN (
        user_metrics.action_date;
 
 
--- =========================================================
 -- 3. Validate date coverage and action totals
---
--- Expected:
--- daily_rows = 76
--- reconstructed_actions = 50,601,736
--- =========================================================
 
 SELECT
     COUNT(*) AS daily_rows,
@@ -349,12 +325,7 @@ SELECT
 FROM mart_daily_performance;
 
 
--- =========================================================
 -- 4. Validate daily cart-user consistency
---
--- Expected:
--- inconsistent_dates = 0
--- =========================================================
 
 SELECT
     COUNT(*) AS inconsistent_dates
@@ -366,9 +337,7 @@ WHERE cart_users <>
       + same_day_cart_abandon_users;
 
 
--- =========================================================
 -- 5. Daily performance report
--- =========================================================
 
 SELECT
     action_date,
@@ -396,9 +365,7 @@ FROM mart_daily_performance
 ORDER BY action_date;
 
 
--- =========================================================
 -- 6. Highest purchase-volume dates
--- =========================================================
 
 SELECT
     action_date,
@@ -423,11 +390,7 @@ ORDER BY
 LIMIT 15;
 
 
--- =========================================================
 -- 7. Monthly summary
---
--- January and April contain partial periods.
--- =========================================================
 
 SELECT
     month_start_date,
@@ -468,9 +431,7 @@ GROUP BY month_start_date
 ORDER BY month_start_date;
 
 
--- =========================================================
 -- 8. Weekday performance
--- =========================================================
 
 SELECT
     day_of_week_number,
