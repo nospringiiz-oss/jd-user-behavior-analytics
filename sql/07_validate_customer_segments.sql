@@ -1,8 +1,6 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- 1. Average behavior metrics by segment
--- =========================================================
 
 SELECT
     customer_segment,
@@ -51,9 +49,8 @@ GROUP BY customer_segment
 ORDER BY avg_intent_score DESC;
 
 
--- =========================================================
+
 -- 2. Flag distribution within each segment
--- =========================================================
 
 SELECT
     customer_segment,
@@ -91,9 +88,9 @@ GROUP BY customer_segment
 ORDER BY user_count DESC;
 
 
--- =========================================================
+
 -- 3. Purchase-intent score distribution
--- =========================================================
+
 
 SELECT
     CASE
@@ -130,9 +127,8 @@ GROUP BY score_range
 ORDER BY score_range;
 
 
--- =========================================================
 -- 4. High-intent segment validation
--- =========================================================
+
 
 SELECT
     COUNT(*) AS high_intent_users,
@@ -163,9 +159,9 @@ FROM mart_user_summary
 WHERE customer_segment = 'High Purchase Intent';
 
 
--- =========================================================
+
 -- 5. Sample users from each segment
--- =========================================================
+
 
 WITH ranked_users AS (
     SELECT
