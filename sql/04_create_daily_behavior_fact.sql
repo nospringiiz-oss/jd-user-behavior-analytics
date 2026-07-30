@@ -1,9 +1,6 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- Daily user-product behavior fact table
--- Grain: one row per date, user and product
--- =========================================================
 
 DROP TABLE IF EXISTS fact_user_product_daily;
 
@@ -29,10 +26,7 @@ CREATE TABLE fact_user_product_daily (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- Aggregate 50 million raw actions
--- This step may take several minutes.
--- =========================================================
 
 INSERT INTO fact_user_product_daily (
     action_date,
@@ -78,11 +72,7 @@ GROUP BY
     sku_id;
 
 
--- =========================================================
 -- Add indexes after loading
--- Adding indexes afterward is faster than maintaining them
--- during the large INSERT.
--- =========================================================
 
 ALTER TABLE fact_user_product_daily
 ADD PRIMARY KEY (
@@ -116,11 +106,8 @@ ON fact_user_product_daily (
 );
 
 
--- =========================================================
--- Verification 1: total actions
--- Expected reconstructed_actions: 50,601,736
--- =========================================================
 
+-- Verification 1: total actions
 SELECT
     COUNT(*) AS aggregated_rows,
     SUM(total_action_count) AS reconstructed_actions,
@@ -129,9 +116,8 @@ SELECT
 FROM fact_user_product_daily;
 
 
--- =========================================================
+
 -- Verification 2: behavior totals
--- =========================================================
 
 SELECT
     SUM(browse_count) AS browse_actions,
