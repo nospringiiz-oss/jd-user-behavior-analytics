@@ -1,12 +1,7 @@
 USE jd_user_behavior;
 
--- =========================================================
+
 -- User-product behavior summary for the complete period
---
--- Grain:
--- One row represents one user interacting with one product
--- during the complete observation period.
--- =========================================================
 
 DROP TABLE IF EXISTS mart_user_product_period;
 
@@ -38,9 +33,7 @@ CREATE TABLE mart_user_product_period (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- Aggregate daily behavior into period-level behavior
--- =========================================================
 
 INSERT INTO mart_user_product_period (
     user_id,
@@ -121,9 +114,7 @@ GROUP BY
     sku_id;
 
 
--- =========================================================
 -- Add keys and indexes after loading
--- =========================================================
 
 ALTER TABLE mart_user_product_period
 ADD PRIMARY KEY (
@@ -157,10 +148,7 @@ ON mart_user_product_period (
 );
 
 
--- =========================================================
 -- Verification 1: row and action totals
--- reconstructed_actions must equal 50,601,736
--- =========================================================
 
 SELECT
     COUNT(*) AS user_product_rows,
@@ -172,9 +160,7 @@ SELECT
 FROM mart_user_product_period;
 
 
--- =========================================================
 -- Verification 2: behavior totals
--- =========================================================
 
 SELECT
     SUM(browse_count) AS browse_actions,
@@ -185,10 +171,7 @@ SELECT
     SUM(click_count) AS click_actions
 FROM mart_user_product_period;
 
-
--- =========================================================
 -- Verification 3: user-product conversion status
--- =========================================================
 
 SELECT
     SUM(interest_flag) AS interested_user_products,
