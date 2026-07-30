@@ -1,9 +1,6 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- Product performance analytical mart
--- Grain: one row per active product
--- =========================================================
 
 DROP TABLE IF EXISTS mart_product_performance;
 
@@ -48,9 +45,8 @@ CREATE TABLE mart_product_performance (
 ) ENGINE = InnoDB;
 
 
--- =========================================================
 -- Insert product-level performance metrics
--- =========================================================
+
 
 INSERT INTO mart_product_performance (
     sku_id,
@@ -229,10 +225,7 @@ CREATE INDEX idx_product_cart_abandonment
 ON mart_product_performance (cart_abandonment_rate);
 
 
--- =========================================================
 -- Verification 1
--- reconstructed_actions must equal 50,601,736
--- =========================================================
 
 SELECT
     COUNT(*) AS active_products,
@@ -248,10 +241,8 @@ SELECT
 FROM mart_product_performance;
 
 
--- =========================================================
 -- Verification 2: highest cart-abandonment products
--- Require at least 20 cart users to reduce small-sample noise.
--- =========================================================
+
 
 SELECT
     sku_id,
