@@ -1,25 +1,15 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- 16 Business Analysis
---
 -- Business questions:
--- 1. What is the overall business performance?
--- 2. Where does user conversion drop?
--- 3. Which customer groups should be targeted?
--- 4. Which categories, brands, and products underperform?
--- 5. When should marketing campaigns be launched?
--- 6. Does product feedback relate to conversion?
---
--- Important limitation:
--- The dataset does not contain product price or revenue.
--- Purchase analysis therefore uses buyers and purchase events.
--- =========================================================
+-- What is the overall business performance?
+-- Where does user conversion drop?
+-- Which customer groups should be targeted?
+-- Which categories, brands, and products underperform?
+-- When should marketing campaigns be launched?
+-- Does product feedback relate to conversion?
 
-
--- =========================================================
 -- 1. EXECUTIVE OVERVIEW
--- =========================================================
 
 SELECT
     dataset_start_date,
@@ -54,12 +44,7 @@ SELECT
 FROM mart_dashboard_executive;
 
 
--- =========================================================
 -- 2. USER BEHAVIOUR FUNNEL
---
--- This is a behavioural reach funnel.
--- Users may skip stages, such as purchasing directly.
--- =========================================================
 
 SELECT
     stage_order,
@@ -73,9 +58,7 @@ FROM mart_funnel_summary
 ORDER BY stage_order;
 
 
--- =========================================================
 -- 3. CUSTOMER SEGMENT DISTRIBUTION
--- =========================================================
 
 SELECT
     customer_segment,
@@ -107,11 +90,8 @@ ORDER BY
     END;
 
 
--- =========================================================
+
 -- 4. MARKETING TARGET SUMMARY
---
--- Suggested actions are analytical recommendations.
--- =========================================================
 
 SELECT
     customer_segment,
@@ -163,12 +143,7 @@ GROUP BY customer_segment
 ORDER BY target_users DESC;
 
 
--- =========================================================
 -- 5. HIGH-PURCHASE-INTENT USERS
---
--- Excludes existing buyers.
--- Suitable for personalised marketing campaigns.
--- =========================================================
 
 SELECT
     user_id,
@@ -207,12 +182,8 @@ ORDER BY
 LIMIT 100;
 
 
--- =========================================================
+
 -- 6. CART-ABANDONMENT CAMPAIGN TARGETS
---
--- Prioritises users with more abandoned products
--- and more recent activity.
--- =========================================================
 
 SELECT
     user_id,
@@ -245,9 +216,8 @@ ORDER BY
 LIMIT 100;
 
 
--- =========================================================
+
 -- 7. CATEGORY PERFORMANCE
--- =========================================================
 
 SELECT
     category_id,
@@ -275,12 +245,7 @@ FROM mart_category_performance
 ORDER BY buyers DESC;
 
 
--- =========================================================
 -- 8. CATEGORY PRIORITY MATRIX
---
--- Priority is based on both abandonment rate
--- and the number of affected users.
--- =========================================================
 
 SELECT
     category_id,
@@ -330,9 +295,7 @@ ORDER BY
     cart_abandon_users DESC;
 
 
--- =========================================================
 -- 9. TOP BRANDS BY BUYER VOLUME
--- =========================================================
 
 SELECT
     brand_id,
@@ -362,12 +325,8 @@ ORDER BY
 LIMIT 20;
 
 
--- =========================================================
+
 -- 10. BRANDS WITH SEVERE CART ABANDONMENT
---
--- Require at least 100 cart users to reduce
--- small-sample distortion.
--- =========================================================
 
 SELECT
     brand_id,
@@ -394,13 +353,7 @@ ORDER BY
 
 LIMIT 20;
 
-
--- =========================================================
 -- 11. HIGH-INTEREST, LOW-CONVERSION PRODUCTS
---
--- Products with substantial user traffic but
--- weak overall conversion.
--- =========================================================
 
 SELECT
     sku_id,
@@ -432,13 +385,7 @@ ORDER BY
 LIMIT 30;
 
 
--- =========================================================
 -- 12. PRODUCTS WITH THE LARGEST CART-ABANDONMENT IMPACT
---
--- Ranks products by number of abandoned cart users,
--- rather than rate alone.
--- =========================================================
-
 SELECT
     sku_id,
     category_id,
@@ -467,9 +414,8 @@ ORDER BY
 LIMIT 30;
 
 
--- =========================================================
+
 -- 13. PRODUCTS WITH STRONG CART CONVERSION
--- =========================================================
 
 SELECT
     sku_id,
@@ -497,9 +443,8 @@ ORDER BY
 LIMIT 20;
 
 
--- =========================================================
+
 -- 14. DAILY PURCHASE TREND
--- =========================================================
 
 SELECT
     action_date,
@@ -521,9 +466,7 @@ FROM mart_daily_performance
 ORDER BY action_date;
 
 
--- =========================================================
 -- 15. HIGHEST-PURCHASE DATES
--- =========================================================
 
 SELECT
     action_date,
@@ -549,9 +492,7 @@ ORDER BY
 LIMIT 15;
 
 
--- =========================================================
 -- 16. WEEKDAY PERFORMANCE
--- =========================================================
 
 SELECT
     day_of_week_number,
@@ -593,9 +534,7 @@ GROUP BY
 ORDER BY day_of_week_number;
 
 
--- =========================================================
 -- 17. HOURLY PERFORMANCE
--- =========================================================
 
 SELECT
     hour_of_day,
@@ -618,10 +557,7 @@ FROM mart_hourly_performance
 ORDER BY hour_of_day;
 
 
--- =========================================================
 -- 18. PEAK PURCHASE HOURS
--- =========================================================
-
 SELECT
     hour_of_day,
     hour_label,
@@ -645,12 +581,7 @@ ORDER BY
 LIMIT 10;
 
 
--- =========================================================
 -- 19. PRODUCT FEEDBACK AND CONVERSION
---
--- This is descriptive analysis.
--- It does not prove that bad comments cause low conversion.
--- =========================================================
 
 SELECT
     CASE
@@ -710,15 +641,8 @@ ORDER BY
     END;
 
 
--- =========================================================
--- 20. FINAL RECONCILIATION
---
--- Expected:
--- total_actions = 50,601,736
--- user_difference = 0
--- product_difference = 0
--- =========================================================
 
+-- 20. FINAL RECONCILIATION
 SELECT
     executive.total_actions,
 
