@@ -1,8 +1,6 @@
 USE jd_user_behavior;
 
--- =========================================================
 -- 1. Clean user dimension
--- =========================================================
 
 DROP TABLE IF EXISTS dim_users;
 
@@ -59,10 +57,8 @@ SELECT
 FROM stg_users;
 
 
--- =========================================================
+
 -- 2. Clean product dimension
--- -1 values are converted to NULL.
--- =========================================================
 
 DROP TABLE IF EXISTS dim_products;
 
@@ -98,10 +94,9 @@ SELECT
 FROM stg_products;
 
 
--- =========================================================
+
 -- 3. Clean comment fact table
--- One row represents one product comment snapshot on one date.
--- =========================================================
+
 
 DROP TABLE IF EXISTS fact_comments;
 
@@ -134,9 +129,8 @@ SELECT
 FROM stg_comments;
 
 
--- =========================================================
 -- 4. Verify row counts
--- =========================================================
+
 
 SELECT
     'dim_users' AS table_name,
@@ -158,9 +152,7 @@ SELECT
 FROM fact_comments;
 
 
--- =========================================================
 -- 5. Verify cleaned values
--- =========================================================
 
 SELECT
     age_group,
